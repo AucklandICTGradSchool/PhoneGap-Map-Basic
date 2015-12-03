@@ -100,7 +100,10 @@
         Otherwise, you can specify specific domains:
     -->
     <access origin="*" /> - a wildcard access tag allows access to all external resource.
+    
+    <plugin name="cordova-plugin-whitelist" version="1" />
     <allow-navigation href="*" />
+    <allow-intent href="*" />
     
 <!--
     <access origin="http://127.0.0.1*"/> --><!-- allow local pages -->
