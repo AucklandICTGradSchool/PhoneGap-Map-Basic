@@ -18,33 +18,12 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
 		
-		
-		// http://stackoverflow.com/questions/16705223/windows-phone-screen-height-in-phonegap-app-not-100
-		/*
-		if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
-			var msViewportStyle = document.createElement("style");
-
-			msViewportStyle.appendChild(
-				document.createTextNode(
-					"@-ms-viewport{width:auto!important}"
-				)
-			);
-
-			msViewportStyle.appendChild(
-				document.createTextNode(
-					"@-ms-viewport{height:device-height!important}"
-				)
-			);
-
-			document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
-		}
-		*/
 		window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, app.onFileSystemSuccess, app.fail);
 
     },
 
     fail: function(error) {
-		console.error("Tipple (PhoneGap JS) failure: code='" + error.code + "', message=" + error.message);
+		console.error("MapApp (PhoneGap JS) failure: code='" + error.code + "', message=" + error.message);
     },
 
     // Update DOM on a Received Event
@@ -96,30 +75,19 @@ var app = {
 		}).addTo(map);
 
 
-/*
-		//L.tileLayer(rootFullPath + 'tipple-store/geodata/MapQuest/{z}/{x}/{y}.png', {
-			
-		L.tileLayer('img/MapQuest/{z}/{x}/{y}.png', {
-			maxZoom: 18
-		}).addTo(map);
-	*/
-
-
 		var uni_message= "The University of Waikato (... in Maaori: Te far-eh Waananga o Waikato), is a comprehensive university in Hamilton, New Zealand, with a satellite campus located in Tauranga. Established in 1964, it was the first university in New Zealand to be designed from a blank canvas.\n\n Waikato is made up of seven faculties and schools, and had more than 12,500 students enrolled at the end of 2012.";
 
 		var marker_popup = L.popup()
 			.setContent("<b>The University of Waikato</b><br />Established 1964.");
-
-		//    .setContent("<b>Hello world!</b><br />I am a popup.");
-
-				
+			
 		// Marker location within Uni
 		var marker = L.marker([start_lat, start_long])
 			.addTo(map)
 			.bindPopup(marker_popup);
 
 		function onMarkerClick(e) {
-			app.speakToMe(uni_message);
+			console.log("supressing attempt to do web-based Text-to-Speech");
+			//app.speakToMe(uni_message);
 		}
 		marker.on('click', onMarkerClick);
 
@@ -138,26 +106,8 @@ var app = {
 			.setContent("You clicked the map at " + e.latlng.toString())
 			.openOn(map);
 			
-			app.speakToMe("You clicked the map at " + e.latlng.toString());
-			
-			/*
-				// bar code scanner???
-		
-			// demo the scan
-			console.log('about to scan');
-			try {
-				var scanned = app.scan();
-				console.log('scan triggered', scanned);
-			} catch (e) {
-				console.log('scan failed');
-				console.log(JSON.stringify(e));
-				console.log('that sucks... reloading in 10');
-				setTimeout(function() {
-					console.log('reloading now...');
-					app.onDeviceReady();
-				}, 10000);
-			}
-			*/
+			console.log("supressing attempt to do web-based Text-to-Speech");
+			//app.speakToMe("You clicked the map at " + e.latlng.toString());
 		
 		}
 		
@@ -165,8 +115,6 @@ var app = {
 
 		app.displayCurrentPosition();
 
-		
-	
     },
 
     displayCurrentPosition: function() {
@@ -211,26 +159,6 @@ var app = {
 	console.log('TTS: Done.');
 
 	return u;
-    },
-	
-	
-	scan: function() {
-        console.log('scan(): init');
-        // documentation said the syntax was this:
-        // var scanner = window.PhoneGap.require("cordova/plugin/BarcodeScanner");
-        // but playing with options, seems like it should be this:
-        var scanner = window.cordova.require("cordova/plugin/BarcodeScanner");
-        scanner.scan(
-                function (result) {
-                    alert("We got a barcode\n" +
-                        "Result: " + result.text + "\n" +
-                        "Format: " + result.format + "\n" +
-                        "Cancelled: " + result.cancelled);
-                },
-                function (error) {
-                    alert("Scanning failed: " + error);
-                }
-                );
     }
 	
 };

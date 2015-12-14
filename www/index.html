@@ -10,16 +10,11 @@
 		 <!--[if lte IE 8]>
 			 <link rel="stylesheet" href="libs/leaflet/leaflet.ie.css" />
 		 <![endif]-->
-
-
 			  
-        <title>My Tipple</title>
+        <title>PhoneGap Open-Street-Map Basic</title>
     </head>
     <body style="background-color: blue;">
-		<!-- 
-			Consider using message over map:
-			http://stackoverflow.com/questions/8708945/how-to-position-text-over-an-image-in-css
-			-->
+	
 			
         <div class="app">
             <div id="deviceready" class="blink">
@@ -27,18 +22,15 @@
                 <p class="event received">Device is Ready</p>
             </div>
 			<div id="map-canvas"></div>
-			<!--
-			<div id="message" style="background-color: green">message area</div>	
-			-->
 			
 	    </div>
         <script type="text/javascript" src="phonegap.js"></script>
 		<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
 		<script type="text/javascript" src="libs/leaflet/leaflet.js"></script>
-		<script type="text/javascript" src="js/core.js"></script>
 		<script type="text/javascript" src="js/index.js"></script>		
         <script type="text/javascript">
             app.initialize();
+			//app.initializeMap(null);
         </script>
     </body>
 </html>
