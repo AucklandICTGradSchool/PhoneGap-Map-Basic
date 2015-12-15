@@ -1,169 +1,91 @@
-var app = {
-    // Application Constructor
-    initialize: function() {
-        this.bindEvents();	
-					
-    },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-    },
-    // deviceready Event Handler
+function initialize() {
+	this.bindEvents();	
+}
+
+// Bind Event Listeners
+//
+// Bind any events that are required on startup. Common events are:
+// 'load', 'deviceready', 'offline', and 'online'.
+function bindEvents() {
+	document.addEventListener('deviceready', this.onDeviceReady, false);
+}
+
+// Update DOM on a Received Event
+function receivedEvent(id) {
+	var parentElement = document.getElementById(id);
+	var listeningElement = parentElement.querySelector('.listening');
+	var receivedElement = parentElement.querySelector('.received');
+
+	listeningElement.setAttribute('style', 'display:none;');
+	receivedElement.setAttribute('style', 'display:block;');
+
+	console.log('Received Event: ' + id);
+
+}
+
+function resizeMap() {
+	var message_height = $('#deviceready').height();
+	
+	var map_height = Math.max(100,$(window).height()-message_height);
+	var map_width  = Math.max(100,$(window).width());
+	
+	console.log("resizeMap() map dimensions = (" + map_width + "," + map_height + ")");
+	$("#map-canvas").width(map_width + "px");
+	$("#map-canvas").height(map_height + "px");
+}
+
+
+function initializeMap() {
+	app.resizeMap();
+
+	var start_lat  = -37.7886;
+	var start_long =  175.317;
+
+	// Create and store Leaflet map
+	this._map = L.map('map-canvas').setView([start_lat,start_long], 16);
+	var map = this._map;
+
+	// On line map
+	L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 16
+	}).addTo(map);
+
+	var marker_popup = L.popup()
+		.setContent("<b>The University of Waikato</b><br />Established 1964.");
+		
+	// Marker location within Uni
+	var marker = L.marker([start_lat, start_long])
+		.addTo(map)
+		.bindPopup(marker_popup);
+}
+
+
+function MapApplication() {
+	var thisAppObject = this; // current instance of App
+	
+	this.initialize = initialize;
+	this.bindEvents = bindEvents;
+	
+	// deviceready Event Handler
     //
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        app.receivedEvent('deviceready');
-		
-		window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, app.onFileSystemSuccess, app.fail);
-
-    },
-
-    fail: function(error) {
-		console.error("MapApp (PhoneGap JS) failure: code='" + error.code + "', message=" + error.message);
-    },
-
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
-
-    },
-
-    resizeMap: function() {
-		var message_height = $('#deviceready').height();
-		
-		var map_height = Math.max(100,$(window).height()-message_height);
-		var map_width  = Math.max(100,$(window).width());
-		
-		console.log("resizeMap() map dimensions = (" + map_width + "," + map_height + ")");
-		$("#map-canvas").width(map_width + "px");
-		$("#map-canvas").height(map_height + "px");
-    },
-
-
-    onFileSystemSuccess: function(fileSystem) {
-        console.log("Filesystem name = " + fileSystem.name);
-        console.log("Filesystem root name = " + fileSystem.root.fullPath);
-		app.initializeMap(fileSystem.root.fullPath);
-    },
-
-    initializeMap: function(rootFullPath) {
-		app.resizeMap();
-
-		var start_lat  = -37.7886;
-		var start_long =  175.317;
-
-		// Create and store Leaflet map
-		//this._map = L.map('map-canvas').setView([-37.760, 175.300], 15);				
-		this._map = L.map('map-canvas').setView([start_lat,start_long], 16);
-		var map = this._map;
-
-		// On line map
-
-		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			maxZoom: 16
-		}).addTo(map);
-
-
-		var uni_message= "The University of Waikato (... in Maaori: Te far-eh Waananga o Waikato), is a comprehensive university in Hamilton, New Zealand, with a satellite campus located in Tauranga. Established in 1964, it was the first university in New Zealand to be designed from a blank canvas.\n\n Waikato is made up of seven faculties and schools, and had more than 12,500 students enrolled at the end of 2012.";
-
-		var marker_popup = L.popup()
-			.setContent("<b>The University of Waikato</b><br />Established 1964.");
-			
-		// Marker location within Uni
-		var marker = L.marker([start_lat, start_long])
-			.addTo(map)
-			.bindPopup(marker_popup);
-
-		function onMarkerClick(e) {
-			console.log("supressing attempt to do web-based Text-to-Speech");
-			//app.speakToMe(uni_message);
-		}
-		marker.on('click', onMarkerClick);
-
-		function onMarkerPopupClose(e) {
-			speechSynthesis.cancel();
-		}
-		marker_popup.on('popupclosed',onMarkerPopupClose);
-		//map.on('popupclose',onMarkerPopupClose);
-
-		// Dynamic popup on map where you click/touch
-
-		var popup = L.popup();
-		
-		function onMapClick(e) {
-			popup.setLatLng(e.latlng)
-			.setContent("You clicked the map at " + e.latlng.toString())
-			.openOn(map);
-			
-			console.log("supressing attempt to do web-based Text-to-Speech");
-			//app.speakToMe("You clicked the map at " + e.latlng.toString());
-		
-		}
-		
-		map.on('click', onMapClick);
-
-		app.displayCurrentPosition();
-
-    },
-
-    displayCurrentPosition: function() {
-
-	var map = this._map;
 	
-	var geoSuccess = function(pos) {
-
-	    console.log("Retrieved geolocation position: (" 
-			+ pos.coords.latitude
-			+ "," + pos.coords.longitude
-			+ ") accuracy="+ pos.coords.accuracy);
-
-	    var circle = L.circle([pos.coords.latitude, pos.coords.longitude], pos.coords.accuracy, 
-				  {
-				      color: 'red',
-				      fillColor: '#f03',
-				      fillOpacity: 0.5
-				  });
-	    circle.addTo(map);
-	};
-
-	var geoFail = function(error) {
-	    console.error("Error getting geolocation: code=" + error.code + " message=" + error.message);
-	};
-
-	console.log("Requesting geolocation ...");
-	navigator.geolocation.getCurrentPosition(geoSuccess, geoFail);
-
-    },
-
-    speakToMe: function(mess) {
-	console.log('TTS: Away to create SpeechSynthesisUtterance');
+	// http://stackoverflow.com/questions/1081499/accessing-an-objects-property-from-an-event-listener-call-in-javascript
+	this.onDeviceReady = function() {
+		thisAppObject.receivedEvent('deviceready');		
+		thisAppObject.initializeMap();
 		
-	u = new SpeechSynthesisUtterance();
-	u.text = mess;
-	u.lang = 'en-GB';
-	u.rate = 1.0;
-
-	console.log('TTS: Away to perform speak');
-	speechSynthesis.speak(u);
-	console.log('TTS: Done.');
-
-	return u;
-    }
+	}; //onDeviceReady end
+    
+	this.receivedEvent = receivedEvent;
 	
-};
+	this.resizeMap = resizeMap;
+	this.initializeMap = initializeMap;
+}
 
-	
+// Application Constructor
+var app = new MapApplication();
 
 $(window).resize(function() {
     app.resizeMap();
